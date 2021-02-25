@@ -1,7 +1,7 @@
 import csvParse, { Options as CsvParserOptions } from 'csv-parse'
 import { createReadStream } from 'fs'
 import luhn from 'luhn-js'
-import { TechstepRecord, TelenorReport } from './types'
+import { TechstepRecord, TelenorReport, DeviceModel } from './types'
 
 const csvParserOptions: CsvParserOptions = {
   delimiter: ';',
@@ -9,8 +9,12 @@ const csvParserOptions: CsvParserOptions = {
   trim: true
 }
 
+const deviceModels: DeviceModel = {}
+
 // TODO: Loop over and fill in missing information based on "Varenummer"
 export async function getTechstepReport (path: string): Promise<TechstepRecord[]> {
+  const hasContent = (data: any): boolean => typeof data === 'string' && data.length > 0
+
   const techstepReportParser = createReadStream(path).pipe(csvParse(csvParserOptions))
   const techstepReport: TechstepRecord[] = []
   for await (const record of techstepReportParser) {
@@ -24,6 +28,10 @@ export async function getTechstepReport (path: string): Promise<TechstepRecord[]
         .replace(',', '.')
     )
 
+    if (typeof deviceModels[record.Varenummer] === 'undefined' && hasContent(record.Produkt)) {
+      deviceModels[record.Varenummer] = record.Produkt
+    }
+
     techstepReport.push({
       imei,
       product: record.Produkt,
@@ -33,6 +41,15 @@ export async function getTechstepReport (path: string): Promise<TechstepRecord[]
       storage: storage?.[0]
     })
   }
+
+  // The Techstep reports may leave out the "Produkt" field if it has been filled on another IMEI number.
+  techstepReport.forEach(record => {
+    if (!hasContent(record.product)) record.product = deviceModels[record.productNumber]
+
+    const storage: RegExpMatchArray | null = record.product.match(/\d+[KMGT]?B/i)
+    record.storage = storage?.[0]
+  })
+
   return techstepReport
 }
 

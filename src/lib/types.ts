@@ -15,6 +15,10 @@ export interface TelenorReport {
 
 export type PhoneInformation = TechstepRecord & TelenorReport
 
+export interface DeviceModel {
+  [model: string]: string
+}
+
 /* Required data
 
 IMEI nummer
