@@ -1,13 +1,6 @@
-import csvParse, { Options as CsvParserOptions } from 'csv-parse'
-import { createReadStream } from 'fs'
 import luhn from 'luhn-js'
 import { TechstepRecord, TelenorReport, DeviceModel } from './types'
-
-const csvParserOptions: CsvParserOptions = {
-  delimiter: ';',
-  columns: true,
-  trim: true
-}
+import { loadExcel } from './load-excel'
 
 const deviceModels: DeviceModel = {}
 
@@ -15,18 +8,24 @@ const deviceModels: DeviceModel = {}
 export async function getTechstepReport (path: string): Promise<TechstepRecord[]> {
   const hasContent = (data: any): boolean => typeof data === 'string' && data.length > 0
 
-  const techstepReportParser = createReadStream(path).pipe(csvParse(csvParserOptions))
-  const techstepReport: TechstepRecord[] = []
-  for await (const record of techstepReportParser) {
-    const imei: string | null = generateCheckDigit(record['imei nummer'])
-    if (imei === null) continue
+  const techstepReportParser = await loadExcel(path)
 
-    const storage: RegExpMatchArray | null = record.Produkt.match(/\d+[KMGT]?B/i)
-    const price = parseFloat(
-      record['Omsetning eks MVA']
-        .replace(/kr| /g, '')
-        .replace(',', '.')
-    )
+  const techstepReport: TechstepRecord[] = []
+  techstepReportParser.forEach(record => {
+    const imei: string | null = generateCheckDigit(record['imei nummer'])
+    if (imei === null) return
+
+    const storage: RegExpMatchArray | null = hasContent(record.Produkt) ? record.Produkt.match(/\d+[KMGT]?B/i) : null
+    let price: number
+    if (typeof record['Omsetning eks MVA'] === 'number') {
+      price = record['Omsetning eks MVA']
+    } else {
+      price = parseFloat(
+        record['Omsetning eks MVA']
+          .replace(/kr| /g, '')
+          .replace(',', '.')
+      )
+    }
 
     if (typeof deviceModels[record.Varenummer] === 'undefined' && hasContent(record.Produkt)) {
       deviceModels[record.Varenummer] = record.Produkt
@@ -40,7 +39,7 @@ export async function getTechstepReport (path: string): Promise<TechstepRecord[]
       price,
       storage: storage?.[0]
     })
-  }
+  })
 
   // The Techstep reports may leave out the "Produkt" field if it has been filled on another IMEI number.
   techstepReport.forEach(record => {
@@ -54,22 +53,24 @@ export async function getTechstepReport (path: string): Promise<TechstepRecord[]
 }
 
 export async function getTelenorReport (path: string): Promise<TelenorReport[]> {
-  const telenorReportParser = createReadStream(path).pipe(csvParse(csvParserOptions))
+  const telenorReportParser = await loadExcel(path)
+
   const telenorReport: TelenorReport[] = []
-  for await (const record of telenorReportParser) {
+  telenorReportParser.forEach(record => {
     const imei: string | null = generateCheckDigit(record.IMEI)
-    if (imei === null) continue
+    if (imei === null) return
 
     telenorReport.push({
       imei,
       firstname: record['Bruker Fornavn'],
       lastname: record['Bruker Etternavn']
     })
-  }
+  })
   return telenorReport
 }
 
-function generateCheckDigit (imei: string): string | null {
+function generateCheckDigit (imei: any): string | null {
+  if (typeof imei === 'number') imei = imei.toString()
   if (typeof imei !== 'string' || imei.length < 14) return null
   if (imei.length === 14) return luhn.generate(imei)
   return imei
