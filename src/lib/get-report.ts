@@ -4,7 +4,6 @@ import { loadExcel } from './load-excel'
 
 const deviceModels: DeviceModel = {}
 
-// TODO: Loop over and fill in missing information based on "Varenummer"
 export async function getTechstepReport (path: string): Promise<TechstepRecord[]> {
   const hasContent = (data: any): boolean => typeof data === 'string' && data.length > 0
 

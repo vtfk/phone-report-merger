@@ -16,7 +16,6 @@ export async function loadExcel (path: string, headerRow: number = 1): Promise<a
     const rowColumnCount = row.cells.filter(cell => typeof cell.value !== 'undefined').length
 
     if (headerRowIndex === undefined && rowColumnCount === worksheet.actualColumnCount) {
-      console.log(`Cells: ${row.cells.length} & Y: ${y} - Path: ${path}`)
       headerRowIndex = y
       const formatCell = (cell: any): string => cell.value?.toString().trim()
       header = rows[headerRowIndex].cells.map(formatCell)

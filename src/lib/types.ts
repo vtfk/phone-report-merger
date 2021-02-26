@@ -18,14 +18,3 @@ export type PhoneInformation = TechstepRecord & TelenorReport
 export interface DeviceModel {
   [model: string]: string
 }
-
-/* Required data
-
-IMEI nummer
- Modell
- Pris
- Storage
- Bruker av telefonen
-  Brukernavn
-  Fullt navn
-*/
