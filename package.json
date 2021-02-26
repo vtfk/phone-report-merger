@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "exceljs": "^4.2.0",
+    "fast-glob": "^3.2.5",
     "luhn-js": "^1.1.2"
   }
 }

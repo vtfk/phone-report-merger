@@ -1,19 +1,33 @@
-import { PhoneInformation, TechstepRecord } from './lib/types'
+import { PhoneInformation, TechstepRecord, TelenorReport } from './lib/types'
 import { saveExcel } from './lib/save-excel'
 import { getTechstepReport, getTelenorReport } from './lib/get-report'
+import { mkdirIfNotExists } from './lib/mkdir-if-not-exist'
 import { writeFileSync } from 'fs'
+import glob from 'fast-glob'
+
+const paths = [
+  './data/techstep',
+  './data/telenor'
+]
 
 ;(async () => {
-  const techstepReportPaths = [
-    './data/techstep-20.csv',
-    './data/techstep-18-19.csv'
-  ]
+  if (mkdirIfNotExists(paths)) {
+    console.log('Created missing directories..')
+    console.log(`Put all Techstep reports in "${paths[0]}"`)
+    console.log(`And put all Telenor reports in "${paths[1]}"`)
+  }
+  const techstepReportPaths = await glob('./data/techstep/*.xlsx', { onlyFiles: true })
+  const telenorReportPaths = await glob('./data/telenor/*.xlsx', { onlyFiles: true })
+
   const techstepReport: TechstepRecord[] = []
   await Promise.all(techstepReportPaths.map(async path => {
     techstepReport.push(...await getTechstepReport(path))
   }))
 
-  const telenorReport = await getTelenorReport('./data/telenor.csv')
+  const telenorReport: TelenorReport[] = []
+  await Promise.all(telenorReportPaths.map(async path => {
+    telenorReport.push(...await getTelenorReport(path))
+  }))
 
   const userDeviceReport: PhoneInformation[] = []
   telenorReport.forEach(record => {
