@@ -12,11 +12,23 @@ const paths = [
 ;(async () => {
   if (mkdirIfNotExists(paths)) {
     console.log('Created missing directories..')
-    console.log(`Put all Techstep reports in "${paths[0]}"`)
-    console.log(`And put all Telenor reports in "${paths[1]}"`)
+    console.log(`Put all Techstep reports (.xlsx) in "${paths[0]}"`)
+    console.log(`And put all Telenor reports (.xlsx) in "${paths[1]}"`)
+    console.log('Then re-run the script.')
+    process.exit(0)
   }
   const techstepReportPaths = await glob('./data/techstep/*.xlsx', { onlyFiles: true })
   const telenorReportPaths = await glob('./data/telenor/*.xlsx', { onlyFiles: true })
+
+  if (techstepReportPaths.length < 1) {
+    console.log(`Couldn't find any (.xlsx) files in "${paths[0]}"`)
+  }
+  if (telenorReportPaths.length < 1) {
+    console.log(`Couldn't find any (.xlsx) files in "${paths[1]}"`)
+  }
+  if (techstepReportPaths.length < 1 && telenorReportPaths.length < 1) {
+    process.exit(1)
+  }
 
   const techstepReport: TechstepRecord[] = []
   await Promise.all(techstepReportPaths.map(async path => {
