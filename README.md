@@ -2,7 +2,7 @@
 A simple script to merge reports from Techstep and Telenor and to be pushed into Cherwell.
 
 ## Usage
-1. [Download](https://github.com/vtfk/phone-report-merger/releases) or [build](#Development-&-building) the latest binary for you platform.
+1. [Download](https://github.com/vtfk/phone-report-merger/releases) or [build](#development--building) the latest binary for you platform.
 2. Run the script once to generate directories for the reports. (Reports are Excel files (.xlsx))
 3. Place Techstep reports in `./data/techstep/` and Telenor reports in `./data/telenor/`
 4. Make sure the reports follow the naming scheme described [here](#naming-scheme)
@@ -29,6 +29,11 @@ npm install
 
 # Run TS script
 npm run dev
+
+# Publish new version
+npm version {patch,minor,major}
+git push && git push --tag
+# If tests complete and the build is successful; A release will be created with the binary files as assets.
 
 # Run tsc
 npm run build
