@@ -35,10 +35,14 @@ const paths = [
     techstepReport.push(...await getTechstepReport(path))
   }))
 
+  console.log(`Found ${techstepReportPaths.length} Techstep reports, with a total of ${techstepReport.length} records.`)
+
   const telenorReport: TelenorReport[] = []
   await Promise.all(telenorReportPaths.map(async path => {
     telenorReport.push(...await getTelenorReport(path))
   }))
+
+  console.log(`Found ${telenorReportPaths.length} Telenor reports, with a total of ${telenorReport.length} records.`)
 
   const userDeviceReport: PhoneInformation[] = []
   telenorReport.forEach(record => {
@@ -50,7 +54,7 @@ const paths = [
     })
   })
 
-  console.log(`Filled ${userDeviceReport.length}/${telenorReport.length} reports`)
+  console.log(`Filled ${userDeviceReport.length}/${telenorReport.length} records`)
 
   await saveExcel('./data/device-report.xlsx', userDeviceReport)
 })().catch(console.error)
