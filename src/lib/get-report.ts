@@ -62,7 +62,8 @@ export async function getTelenorReport (path: string): Promise<TelenorReport[]> 
     telenorReport.push({
       imei,
       firstname: record['Bruker Fornavn'],
-      lastname: record['Bruker Etternavn']
+      lastname: record['Bruker Etternavn'],
+      subscriptionStart: record['Abonnementets startdato']
     })
   })
   return telenorReport

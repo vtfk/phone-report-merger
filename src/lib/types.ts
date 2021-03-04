@@ -11,6 +11,7 @@ export interface TelenorReport {
   firstname: string
   lastname: string
   imei: string
+  subscriptionStart: Date
 }
 
 export type PhoneInformation = TechstepRecord & TelenorReport
