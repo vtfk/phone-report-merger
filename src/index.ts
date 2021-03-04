@@ -2,7 +2,6 @@ import { PhoneInformation, TechstepRecord, TelenorReport } from './lib/types'
 import { saveExcel } from './lib/save-excel'
 import { getTechstepReport, getTelenorReport } from './lib/get-report'
 import { mkdirIfNotExists } from './lib/mkdir-if-not-exist'
-import { writeFileSync } from 'fs'
 import glob from 'fast-glob'
 
 const paths = [
@@ -41,6 +40,5 @@ const paths = [
 
   console.log(`Filled ${userDeviceReport.length}/${telenorReport.length} reports`)
 
-  writeFileSync('./data/output.json', JSON.stringify(userDeviceReport, null, 2))
   await saveExcel('./data/device-report.xlsx', userDeviceReport)
 })().catch(console.error)
