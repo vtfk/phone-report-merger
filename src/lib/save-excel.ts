@@ -13,5 +13,15 @@ export async function saveExcel (path: string, data: PhoneInformation[]): Promis
 
   worksheet.addRows(dataRows)
 
+  const minLength = 10
+  worksheet.columns.forEach(column => {
+    let maxLength = 0
+    column.values.forEach(row => {
+      const currentLength = row?.toString().length ?? 0
+      if (currentLength > maxLength) maxLength = currentLength
+    })
+    column.width = maxLength < minLength ? minLength : maxLength
+  })
+
   await workbook.xlsx.writeFile(path)
 }
