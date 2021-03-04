@@ -14,7 +14,7 @@
     "lint": "eslint src/",
     "lint:fix": "eslint --fix src/",
     "test": "npm run lint",
-    "build:binary": "npm run build && pkg ./"
+    "build:bin": "npm run build && pkg ./ --out-path ./bin/"
   },
   "keywords": [],
   "author": "Ingar Helgesen (https://github.com/Sherex)",
