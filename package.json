@@ -1,9 +1,11 @@
 {
   "name": "phone-report-merger",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "",
-  "bin": "dist/index.js",
+  "bin": {
+    "phone-report-merger": "dist/index.js"
+  },
   "files": [
     "dist/"
   ],
