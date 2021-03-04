@@ -3,7 +3,7 @@ import { PhoneInformation } from './types'
 
 export async function saveExcel (path: string, data: PhoneInformation[]): Promise<void> {
   const workbook = new Excel.Workbook()
-  workbook.creator = 'https://github.com/vtfk/cherwell-mobile-report'
+  workbook.creator = 'https://github.com/vtfk/phone-report-merger'
 
   const worksheet = workbook.addWorksheet('Mobil-rapport')
 
