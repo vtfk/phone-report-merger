@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "description": "",
-  "main": "dist/index.js",
+  "bin": "dist/index.js",
   "files": [
     "dist/"
   ],
@@ -13,7 +13,8 @@
     "dev": "ts-node src/",
     "lint": "eslint src/",
     "lint:fix": "eslint --fix src/",
-    "test": "npm run lint"
+    "test": "npm run lint",
+    "build:binary": "npm run build && pkg ./"
   },
   "keywords": [],
   "author": "Ingar Helgesen (https://github.com/Sherex)",
@@ -27,6 +28,7 @@
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-promise": "4.3.1",
     "eslint-plugin-standard": "4.1.0",
+    "pkg": "^4.4.9",
     "ts-node": "9.1.1",
     "typescript": "4.1.5"
   },
