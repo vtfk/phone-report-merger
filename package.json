@@ -35,6 +35,7 @@
     "typescript": "4.2.3"
   },
   "dependencies": {
+    "@vtfk/logger": "^2.5.1",
     "exceljs": "4.2.0",
     "fast-glob": "3.2.5",
     "luhn-js": "1.1.2"
