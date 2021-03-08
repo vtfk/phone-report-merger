@@ -1,5 +1,18 @@
 # Phone Report Merger
+
+[![Build & Release](https://github.com/vtfk/phone-report-merger/actions/workflows/release.yml/badge.svg)](https://github.com/vtfk/phone-report-merger/actions/workflows/release.yml)
+
 A simple script to merge reports from Techstep and Telenor and to be pushed into Cherwell.
+
+---
+
+## Table of contents
+- [Usage](#Usage)
+- [Report naming scheme](#Report-naming-scheme)
+- [Development & building](#Development--building)
+- [License](#LICENSE)
+
+---
 
 ## Usage
 1. [Download](https://github.com/vtfk/phone-report-merger/releases) or [build](#development--building) the latest binary for you platform.
@@ -7,7 +20,9 @@ A simple script to merge reports from Techstep and Telenor and to be pushed into
 3. Place Techstep reports in `./data/techstep/` and Telenor reports in `./data/telenor/`
 4. Make sure the reports follow the naming scheme described [here](#naming-scheme)
 
-## Naming scheme
+---
+
+## Report naming scheme
 These columns are required (case-sensitive), but it can include others as well (they will not be used)
 
 ### Telenor report
@@ -19,6 +34,8 @@ These columns are required (case-sensitive), but it can include others as well (
 |Produkt|imei nummer|Varenummer|Antall|Omsetning eks MVA|
 |-|-|-|-|-|
 |Text|Text/Number|Text|Number|Number|
+
+---
 
 ## Development & building
 ```sh
