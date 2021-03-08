@@ -4,6 +4,9 @@ import { loadExcel } from './load-excel'
 
 const deviceModels: DeviceModel = {}
 
+const parsedTechstepImeis: string[] = []
+const parsedTelenorImeis: string[] = []
+
 export async function getTechstepReport (path: string): Promise<TechstepRecord[]> {
   const hasContent = (data: any): boolean => typeof data === 'string' && data.length > 0
 
@@ -12,7 +15,7 @@ export async function getTechstepReport (path: string): Promise<TechstepRecord[]
   const techstepReport: TechstepRecord[] = []
   techstepReportParser.forEach(record => {
     const imei: string | null = generateCheckDigit(record['imei nummer'])
-    if (imei === null) return
+    if (imei === null || parsedTechstepImeis.includes(imei)) return
 
     const storage: RegExpMatchArray | null = hasContent(record.Produkt) ? record.Produkt.match(/\d+[KMGT]?B/i) : null
     let price: number
@@ -38,6 +41,8 @@ export async function getTechstepReport (path: string): Promise<TechstepRecord[]
       price,
       storage: storage?.[0]
     })
+
+    parsedTechstepImeis.push(imei)
   })
 
   // The Techstep reports may leave out the "Produkt" field if it has been filled on another IMEI number.
@@ -57,7 +62,7 @@ export async function getTelenorReport (path: string): Promise<TelenorReport[]> 
   const telenorReport: TelenorReport[] = []
   telenorReportParser.forEach(record => {
     const imei: string | null = generateCheckDigit(record.IMEI)
-    if (imei === null) return
+    if (imei === null || parsedTelenorImeis.includes(imei)) return
 
     telenorReport.push({
       imei,
@@ -65,6 +70,8 @@ export async function getTelenorReport (path: string): Promise<TelenorReport[]> 
       lastname: record['Bruker Etternavn'],
       subscriptionStart: record['Abonnementets startdato']
     })
+
+    parsedTelenorImeis.push(imei)
   })
   return telenorReport
 }
