@@ -51,6 +51,14 @@ export async function getTechstepReport (path: string): Promise<TechstepRecord[]
 
     const storage: RegExpMatchArray | null = record.product.match(/\d+[KMGT]?B/i)
     record.storage = storage?.[0]
+
+    const manufacturer: RegExpMatchArray | null = record.product.match(/^(?<manufacturer>\w+) /i)
+    if (manufacturer?.groups?.manufacturer !== undefined) {
+      const fullMatch = manufacturer[0]
+      record.product = record.product.replace(fullMatch, '')
+
+      record.manufacturer = manufacturer.groups.manufacturer
+    }
   })
 
   return techstepReport

@@ -61,6 +61,14 @@ const paths = [
     })
   })
 
+  const manufacturers: string[] = []
+  userDeviceReport.forEach(device => {
+    if (device.manufacturer === undefined || manufacturers.includes(device.manufacturer)) return
+    manufacturers.push(device.manufacturer)
+  })
+
+  logger('info', ['Found these manufacturers', manufacturers.join(', ')])
+
   logger('info', [`Filled ${userDeviceReport.length}/${telenorReport.length} records`])
 
   await saveExcel(outputReportPath, userDeviceReport)

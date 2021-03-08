@@ -1,4 +1,5 @@
 export interface TechstepRecord {
+  manufacturer?: string
   product: string
   productNumber: string
   imei: string

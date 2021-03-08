@@ -7,8 +7,8 @@ export async function saveExcel (path: string, data: PhoneInformation[]): Promis
 
   const worksheet = workbook.addWorksheet('Mobil-rapport')
 
-  const headerRow = ['IMEI', 'Brukernavn', 'Fornavn', 'Etternavn', 'Produkt', 'Produktnummer', 'Antall', 'Pris', 'Lagring']
-  const dataRows = data.map(device => [device.imei, '', device.firstname, device.lastname, device.product, device.productNumber, device.amount, device.price, device.storage])
+  const headerRow = ['IMEI', 'Brukernavn', 'Fornavn', 'Etternavn', 'Produsent', 'Produkt', 'Produktnummer', 'Antall', 'Pris', 'Lagring']
+  const dataRows = data.map(device => [device.imei, '', device.firstname, device.lastname, device.manufacturer, device.product, device.productNumber, device.amount, device.price, device.storage])
   dataRows.unshift(headerRow)
 
   worksheet.addRows(dataRows)
