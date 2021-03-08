@@ -4,12 +4,15 @@ import { getTechstepReport, getTelenorReport } from './lib/get-report'
 import { mkdirIfNotExists } from './lib/mkdir-if-not-exist'
 import glob from 'fast-glob'
 
+const outputReportPath = './data/device-report.xlsx'
 const paths = [
   './data/techstep',
   './data/telenor'
 ]
 
 ;(async () => {
+  const startTime = new Date()
+  console.log('Start!')
   if (mkdirIfNotExists(paths)) {
     console.log('Created missing directories..')
     console.log(`Put all Techstep reports (.xlsx) in "${paths[0]}"`)
@@ -29,6 +32,8 @@ const paths = [
   if (techstepReportPaths.length < 1 && telenorReportPaths.length < 1) {
     process.exit(1)
   }
+
+  console.log('Importing reports...')
 
   const techstepReport: TechstepRecord[] = []
   await Promise.all(techstepReportPaths.map(async path => {
@@ -56,5 +61,9 @@ const paths = [
 
   console.log(`Filled ${userDeviceReport.length}/${telenorReport.length} records`)
 
-  await saveExcel('./data/device-report.xlsx', userDeviceReport)
+  await saveExcel(outputReportPath, userDeviceReport)
+  console.log(`Saved report to ${outputReportPath}`)
+
+  const timeUsed = (new Date()).getTime() - startTime.getTime()
+  console.log(`Done! Time used ${timeUsed}ms`)
 })().catch(console.error)
