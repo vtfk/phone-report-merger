@@ -20,3 +20,10 @@ export type PhoneInformation = TechstepRecord & TelenorReport
 export interface DeviceModel {
   [model: string]: string
 }
+
+export interface GetADUsersOptions {
+  users: Array<{
+    givenname: string
+    surname: string
+  }>
+}
