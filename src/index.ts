@@ -5,6 +5,7 @@ import { saveExcel } from './lib/save-excel'
 import * as reports from './lib/get-report'
 import { mkdirIfNotExists } from './lib/mkdir-if-not-exist'
 import { getADUsersBulk } from './lib/get-aduser'
+import { parse } from 'path'
 
 const outputReportPath = './data/device-report.xlsx'
 const paths = [
@@ -40,11 +41,13 @@ const paths = [
 
   const techstepReport: TechstepRecord[] = []
   await Promise.all(techstepReportPaths.map(async path => {
+    if (parse(path).name.startsWith('~$')) return
     techstepReport.push(...await reports.getTechstepReport(path))
   }))
 
   const telenorReport: TelenorReport[] = []
   await Promise.all(telenorReportPaths.map(async path => {
+    if (parse(path).name.startsWith('~$')) return
     telenorReport.push(...await reports.getTelenorReport(path))
   }))
 
