@@ -2,7 +2,7 @@ import { logger } from '@vtfk/logger'
 import glob from 'fast-glob'
 import { PhoneInformation, TechstepRecord, TelenorReport } from './lib/types'
 import { saveExcel } from './lib/save-excel'
-import { getTechstepReport, getTelenorReport } from './lib/get-report'
+import * as reports from './lib/get-report'
 import { mkdirIfNotExists } from './lib/mkdir-if-not-exist'
 import { getADUsersBulk } from './lib/get-aduser'
 
@@ -40,16 +40,20 @@ const paths = [
 
   const techstepReport: TechstepRecord[] = []
   await Promise.all(techstepReportPaths.map(async path => {
-    techstepReport.push(...await getTechstepReport(path))
+    techstepReport.push(...await reports.getTechstepReport(path))
   }))
-
-  logger('info', [`Found ${techstepReportPaths.length} Techstep reports, with a total of ${techstepReport.length} records.`])
 
   const telenorReport: TelenorReport[] = []
   await Promise.all(telenorReportPaths.map(async path => {
-    telenorReport.push(...await getTelenorReport(path))
+    telenorReport.push(...await reports.getTelenorReport(path))
   }))
 
+  if (reports.isMissingRequiredColumns) {
+    logger('error', ['Please fix the missing columns described above.'])
+    process.exit(1)
+  }
+
+  logger('info', [`Found ${techstepReportPaths.length} Techstep reports, with a total of ${techstepReport.length} records.`])
   logger('info', [`Found ${telenorReportPaths.length} Telenor reports, with a total of ${telenorReport.length} records.`])
 
   const userDeviceReport: PhoneInformation[] = []
@@ -81,7 +85,6 @@ const paths = [
     })
   } catch (error) {
     logger('warn', ['Couldn\'t get usernames', 'skipping..'])
-    console.error(error)
   }
 
   logger('info', ['Found these manufacturers', manufacturers.join(', ')])

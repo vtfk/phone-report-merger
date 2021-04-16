@@ -1,6 +1,11 @@
 import luhn from 'luhn-js'
 import { TechstepRecord, TelenorReport, DeviceModel } from './types'
 import { loadExcel } from './load-excel'
+import { logger } from '@vtfk/logger'
+
+const techstepRequiredColumns = ['Produkt', 'imei nummer', 'Varenummer', 'Antall', 'Omsetning eks MVA']
+const telenorRequiredColumns = ['Abonnementets startdato', 'Bruker Etternavn', 'Bruker Fornavn', 'IMEI']
+export let isMissingRequiredColumns = false
 
 const deviceModels: DeviceModel = {}
 
@@ -11,6 +16,14 @@ export async function getTechstepReport (path: string): Promise<TechstepRecord[]
   const hasContent = (data: any): boolean => typeof data === 'string' && data.length > 0
 
   const techstepReportParser = await loadExcel(path)
+
+  const reportColumns = Object.keys(techstepReportParser[0])
+  const missingRequiredColumns = techstepRequiredColumns.filter(requiredColumn => !reportColumns.includes(requiredColumn))
+  if (missingRequiredColumns.length > 0) {
+    logger('error', ['Missing required columns in Techstep report!', missingRequiredColumns.join(', '), path])
+    isMissingRequiredColumns = true
+    return []
+  }
 
   const techstepReport: TechstepRecord[] = []
   techstepReportParser.forEach(record => {
@@ -66,6 +79,14 @@ export async function getTechstepReport (path: string): Promise<TechstepRecord[]
 
 export async function getTelenorReport (path: string): Promise<TelenorReport[]> {
   const telenorReportParser = await loadExcel(path)
+
+  const reportColumns = Object.keys(telenorReportParser[0])
+  const missingRequiredColumns = telenorRequiredColumns.filter(requiredColumn => !reportColumns.includes(requiredColumn))
+  if (missingRequiredColumns.length > 0) {
+    logger('error', ['Missing required columns in Telenor report!', missingRequiredColumns.join(', '), path])
+    isMissingRequiredColumns = true
+    return []
+  }
 
   const telenorReport: TelenorReport[] = []
   telenorReportParser.forEach(record => {
