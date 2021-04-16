@@ -4,6 +4,7 @@ import { PhoneInformation, TechstepRecord, TelenorReport } from './lib/types'
 import { saveExcel } from './lib/save-excel'
 import { getTechstepReport, getTelenorReport } from './lib/get-report'
 import { mkdirIfNotExists } from './lib/mkdir-if-not-exist'
+import { getADUsersBulk } from './lib/get-aduser'
 
 const outputReportPath = './data/device-report.xlsx'
 const paths = [
@@ -66,6 +67,22 @@ const paths = [
     if (device.manufacturer === undefined || manufacturers.includes(device.manufacturer)) return
     manufacturers.push(device.manufacturer)
   })
+
+  try {
+    logger('info', ['Getting usernames from AD'])
+    const users = userDeviceReport.map(deviceRecord => ({ givenname: deviceRecord.firstname, surname: deviceRecord.lastname }))
+    // TODO: Check for duplicate names and warn about it
+    const adUsers = await getADUsersBulk({ users })
+    logger('info', ['Got usernames from AD', 'count', String(adUsers.users.length)])
+
+    userDeviceReport.forEach(deviceRecord => {
+      const user = adUsers.users.find(adUser => adUser.givenname === deviceRecord.firstname && adUser.surname === deviceRecord.lastname)
+      if (typeof user !== 'undefined') deviceRecord.username = user?.username
+    })
+  } catch (error) {
+    logger('warn', ['Couldn\'t get usernames', 'skipping..'])
+    console.error(error)
+  }
 
   logger('info', ['Found these manufacturers', manufacturers.join(', ')])
 

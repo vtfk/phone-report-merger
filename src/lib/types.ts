@@ -15,7 +15,11 @@ export interface TelenorReport {
   subscriptionStart: Date
 }
 
-export type PhoneInformation = TechstepRecord & TelenorReport
+export interface AdditionalColumns {
+  username?: string
+}
+
+export type PhoneInformation = TechstepRecord & TelenorReport & AdditionalColumns
 
 export interface DeviceModel {
   [model: string]: string
@@ -25,5 +29,13 @@ export interface GetADUsersOptions {
   users: Array<{
     givenname: string
     surname: string
+  }>
+}
+
+export interface GetADUsersResult {
+  users: Array<{
+    givenname: string
+    surname: string
+    username: string
   }>
 }
