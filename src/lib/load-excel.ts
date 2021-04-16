@@ -19,9 +19,11 @@ export async function loadExcel (path: string, headerRow: number = 1): Promise<a
       headerRowIndex = y
       const formatCell = (cell: any): string => cell.value?.toString().trim()
       header = rows[headerRowIndex].cells.map(formatCell)
+      return
     } else if (headerRowIndex === undefined) return
 
-    const colIndex = y - headerRowIndex
+    // Do not include the header as a column
+    const colIndex = y - headerRowIndex - 1
 
     sheet[colIndex] = {}
     row.cells.forEach((cell, x) => {
