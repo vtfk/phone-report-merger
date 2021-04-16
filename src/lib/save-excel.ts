@@ -16,7 +16,7 @@ export async function saveExcel (path: string, data: PhoneInformation[]): Promis
   const minLength = 10
   worksheet.columns.forEach(column => {
     let maxLength = 0
-    column.values.forEach(row => {
+    column.values?.forEach(row => {
       const currentLength = row?.toString().length ?? 0
       if (currentLength > maxLength) maxLength = currentLength
     })
